@@ -1,11 +1,6 @@
-ZOLNU — زولنو
+ZOLNU 0.3 — iPhone only
 
-افتح ZOLNU-preview.html لتجربة الواجهة مباشرة بالمتصفح.
-المعاينة محلية؛ لا تُنشئ حسابات عامة أو تنشر بيانات للآخرين.
-
-لتشغيل مشروع الموبايل اقرأ README-AR.md
-لإطارات الحساب والغلاف والتوثيق وبناء IPA اقرأ release/UPGRADE-0.2-AR.md
-لتجهيز النشر اقرأ release/STORE-AR.md
-
-هذا مشروع أولي، ولا يحتوي APK أو IPA موقّعًا.
-لم يُنشر على App Store أو Google Play.
+Native build: GitHub branch zolnu/iphone, workflow Build ZOLNU IPA for Sideloadly.
+Source is in zolnu/ on that branch. Build output is an unsigned arm64 IPA for Sideloadly.
+Read README-AR.md for the actual feature list and backend setup.
+A founder star is not a blue verified check. Blue verification requires server-side review.

@@ -25,6 +25,12 @@ zolnu_executable=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$zoln
 test -f "$zolnu_app/$zolnu_executable"
 xcrun lipo -info "$zolnu_app/$zolnu_executable" | grep -q arm64
 test -f "$zolnu_app/main.jsbundle"
+python3 - "$zolnu_app/Info.plist" "$zolnu_output/BUILD-INFO.json" <<'PYINFO'
+import json,os,plistlib,sys
+with open(sys.argv[1],'rb') as f: info=plistlib.load(f)
+assert info.get('UIDeviceFamily') == [1], 'Build must target iPhone only'
+with open(sys.argv[2],'w') as f: json.dump({'app':'ZOLNU','version':info.get('CFBundleShortVersionString'),'build':info.get('CFBundleVersion'),'minimum_ios':info.get('MinimumOSVersion'),'device_family':info.get('UIDeviceFamily'),'architecture':'arm64','commit':os.environ.get('GITHUB_SHA'),'signed':False},f,indent=2)
+PYINFO
 mkdir -p "$zolnu_temp/package/Payload"
 cp -R "$zolnu_app" "$zolnu_temp/package/Payload/"
 (cd "$zolnu_temp/package" && /usr/bin/zip -qry "$zolnu_output/ZOLNU-Sideloadly.ipa" Payload)

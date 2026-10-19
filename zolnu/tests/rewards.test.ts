@@ -21,9 +21,11 @@ test('company ownership uses confirmed server email; campaign grant is permanent
   await assert.rejects(db.query('update public.profiles set username=$1 where id=$2',['zolnu',fan]),/محجوز/);
   await db.query('insert into public.likes(user_id,post_id) values($1,$2)',[fan,post]);
   assert.equal((await db.query('select * from public.verification_grants where user_id=$1',[fan])).rows.length,1);
+  assert.equal((await db.query('select * from public.account_verifications where user_id=$1',[fan])).rows.length,0);
   await db.query('update public.profiles set frame=$1 where id=$2',['founder',fan]);
   await db.query('delete from public.likes where user_id=$1 and post_id=$2',[fan,post]);
   assert.equal((await db.query('select * from public.verification_grants where user_id=$1',[fan])).rows.length,1);
+  assert.equal((await db.query('select * from public.account_verifications where user_id=$1',[fan])).rows.length,0);
   await db.exec(`set request.jwt.claim.sub='${owner}';`);await db.query('select public.stop_verification_campaign($1)',[campaign]);
   await db.exec(`set request.jwt.claim.sub='${late}';`);await db.query('insert into public.likes(user_id,post_id) values($1,$2)',[late,post]);
   assert.equal((await db.query('select * from public.verification_grants where user_id=$1',[late])).rows.length,0);
@@ -32,5 +34,6 @@ test('company ownership uses confirmed server email; campaign grant is permanent
   assert.equal((await db.query('select * from public.verification_grants where user_id=$1',[late])).rows.length,0);
   await db.exec(`set request.jwt.claim.sub='${owner}';`);await db.query('delete from public.posts where id=$1',[post]);
   assert.equal((await db.query('select * from public.verification_grants where user_id=$1',[fan])).rows.length,1);
+  assert.equal((await db.query('select * from public.account_verifications where user_id=$1',[fan])).rows.length,0);
  } finally {await db.close();}
 });

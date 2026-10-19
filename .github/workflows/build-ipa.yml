@@ -4,6 +4,9 @@ on:
     branches: ['zolnu/iphone']
     paths: ['zolnu/**', '.github/workflows/build-ipa.yml']
   workflow_dispatch:
+concurrency:
+  group: zolnu-iphone
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

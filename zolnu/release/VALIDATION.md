@@ -1,28 +1,22 @@
 # Validation — 2026-10-19
 
-Version: 0.2.0 / Expo SDK 58 / Expo Router.
+Version 0.3.0: iPhone-only release configuration, Expo SDK 58, Expo Router.
 
-Passed:
+Passed locally:
 
-- TypeScript: `npm run typecheck`; ESLint: `npm run lint` with no errors or warnings.
-- Nine automated tests: feed filtering, Arabic/handle search, state toggles, post validation, username validation, SQL migration/RLS/cascade behavior, permanent founder rewards, state upgrades, and company/campaign authorization.
-- The database test runs the actual migration against embedded PostgreSQL (PGlite) with minimal Supabase auth/storage table stubs. It verifies signup profile creation, rejection of forged ownership, rejection of deleting/updating another account's data, private saves, blocking and cascading account-data deletion. It is not a live hosted Supabase integration test.
-- Expo production JavaScript/asset export for Web, iOS and Android. These exports are not signed native installation packages.
-- Headless Chromium at 1440×1000 and 390×844: feed, like, comment, search, profile editing, publish, persistence after reload, saves, delete, block, mobile navigation and no horizontal overflow.
-- Actual playback progression of the bundled video; mute toggle and pause controls.
-- Image aspect-ratio assertion and visual inspection of phone/desktop layouts.
-- Standalone HTML opened directly with file://: embedded images and video playback worked without a server.
-- No browser runtime errors during the successful final UI checks.
+- TypeScript and ESLint without errors or warnings.
+- Ten tests running model behavior and the real SQL migrations in PGlite with minimal Supabase auth/storage stubs.
+- Database ownership/RLS, private saves, blocks/cascades, confirmed-email company claim, protected campaign control, permanent founder rewards, private review evidence, denied direct blue-badge insertion, denied unauthorized/self review, independent administrator approval, automatic blue-badge revocation on identity change.
+- Chromium UI checks at 390×844: feed/media dimensions, like/comment/search/edit/post/reload/save/delete/block, navigation, bundled video time progression/mute/pause, and no runtime errors.
+- White phone interface inspected visually; circular avatars, full-width square media, compact navigation, three-column account/explore grids.
 
-Not verified in this session:
+GitHub macOS native build is tracked in Actions on branch `zolnu/iphone`. Only a successful native Xcode build and validated artifact constitute an IPA; source archives and JavaScript exports do not.
 
-- Physical iOS/Android devices, native media-library permission flow, native codecs, performance and screen readers.
-- Hosted Supabase authentication, email delivery, cloud storage API and deployed Edge Function account deletion.
-- EAS cloud builds, device signing, TestFlight, Google Play tracks or any store submission.
-- Public moderation workflow, public support/privacy/deletion URLs and store privacy declarations.
+Not yet verified:
 
-Store publication is not complete. See STORE-AR.md for the setup and testing still needed.
+- Physical iPhone execution, native media permission flow, codecs, signing and device performance.
+- Hosted Supabase authentication/email/storage and deployed account-deletion function.
+- Real account verification review or an operating moderation team.
+- App Store submission/acceptance.
 
-Additional 0.2 checks: verified-email company ownership; denied direct role/grant insertion; denied unauthorized campaign management; founder frame locked before award; grants survive unlike, campaign stop/expiry and campaign-post deletion. IPA workflow YAML and macOS build script syntax checked. Local IPA build refuses Linux explicitly; no native IPA has been produced by these checks.
-
-The final browser checks cover campaign participation, founder-frame lock/unlock, changing avatar/banner and preserving both as local data, keeping the badge after unlike and stopping the campaign, and navigation/reload of the portable preview. Cloud build remains blocked on access to the connected GitHub execution tools; installed-plugin status alone is not evidence that a build ran.
+Founder stars are promotional rewards, not identity verification. Blue checks require a separate reviewed server grant. Native artifacts are unsigned before Sideloadly signing.

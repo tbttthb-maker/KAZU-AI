@@ -15,7 +15,7 @@ export const profileSeed: Profile[] = [
 ];
 export function initialState(): SocialState {
   return { profiles: profileSeed.map(p => ({ ...p })), posts: [
-    { id: 'launch-demo', userId: COMPANY_DEMO_ID, caption: 'إنت من البدايات. ✦\nحط لايك لهذا المنشور أثناء الحملة واحصل على توثيق مؤسس دائم لحسابك. العرض محدود، والشارة تبقى بعد نهايته.\nهذه محاكاة للحملة، محفوظة على جهازك.', uri: '', kind: 'image', art: 2, createdAt: new Date().toISOString() },
+    { id: 'launch-demo', userId: COMPANY_DEMO_ID, caption: 'إنت من البدايات. ✦\nحط لايك لهذا المنشور أثناء الحملة واحصل على شارة مؤسس دائمة لحسابك. العرض محدود، والشارة تبقى بعد نهايته.\nهذه محاكاة للحملة، محفوظة على جهازك.', uri: '', kind: 'image', art: 2, createdAt: new Date().toISOString() },
     { id: 'p1', userId: 'lina', caption: 'أحيانًا، كل اللي نحتاجه نغيّر زاوية النظر. ✦\n#فن #ألوان #زولنو', uri: '', kind: 'image', art: 0, createdAt: '2026-10-19T10:00:00Z' },
     { id: 'p2', userId: 'omar', caption: 'على حافة الهدوء.\n#تصميم #لحظات', uri: '', kind: 'image', art: 1, createdAt: '2026-10-19T09:00:00Z' },
     { id: 'p3', userId: 'noor', caption: 'عالم صغير، خيال ما إله حدود.\n#إبداع #فضاء', uri: '', kind: 'image', art: 2, createdAt: '2026-10-19T08:00:00Z' },
