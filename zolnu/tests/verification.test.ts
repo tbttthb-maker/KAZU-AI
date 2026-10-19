@@ -21,7 +21,11 @@ test('blue verification requires independent company review, protects requests a
  await db.exec(`set request.jwt.claim.sub='${user}'`);await db.query('update public.profiles set name=$1 where id=$2',['New identity',user]);
  assert.equal((await db.query('select * from public.account_verifications where user_id=$1',[user])).rows.length,0);
  assert.equal((await db.query<{status:string}>('select status from public.verification_requests where user_id=$1',[user])).rows[0].status,'revoked');
- await db.exec(`set request.jwt.claim.sub='${admin}'`);await db.query('select public.request_account_verification($1,$2)',['https://example.com/company','This is the company official public website']);
+ await db.query('select public.request_account_verification($1,$2)',['https://example.com/renewed','A fresh verification request with ownership evidence.']);
+ await db.query('update public.profiles set username=$1 where id=$2',['renamed_owner',user]);
+ await db.exec(`set request.jwt.claim.sub='${admin}'`);
+ await assert.rejects(db.query('select public.review_account_verification($1,true,$2)',[user,'Cannot approve a changed identity while pending']),/غير متاح/);
+ await db.query('select public.request_account_verification($1,$2)',['https://example.com/company','This is the company official public website']);
  await assert.rejects(db.query('select public.review_account_verification($1,true,$2)',[admin,'Trying to self approve my own badge']),/بنفسك/);
  }finally{await db.close();}
 });

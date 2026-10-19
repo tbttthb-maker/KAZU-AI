@@ -25,6 +25,8 @@ create function public.request_account_verification(p_url text,p_explanation tex
 language plpgsql security definer set search_path='' as $$
 begin
  if auth.uid() is null or not exists(select 1 from auth.users where id=auth.uid() and email_confirmed_at is not null) then raise exception 'أكد بريدك الإلكتروني أولًا'; end if;
+ -- Serialize requests, profile edits and reviews against the same identity row.
+ perform 1 from public.profiles where id=auth.uid() for update;
  if exists(select 1 from public.account_verifications where user_id=auth.uid() and active) then raise exception 'حسابك موثّق بالفعل'; end if;
  if exists(select 1 from public.verification_requests where user_id=auth.uid() and status='pending') then raise exception 'طلبك قيد المراجعة'; end if;
  insert into public.verification_requests(user_id,evidence_url,explanation) values(auth.uid(),trim(p_url),trim(p_explanation))
@@ -35,6 +37,7 @@ language plpgsql security definer set search_path='' as $$
 begin
  if not exists(select 1 from public.company_accounts where user_id=auth.uid()) then raise exception 'مراجعة الطلبات لإدارة الشركة فقط'; end if;
  if p_user_id=auth.uid() then raise exception 'لا يمكن اعتماد توثيق حسابك بنفسك'; end if;
+ perform 1 from public.profiles where id=p_user_id for update;
  if p_note is null or length(trim(p_note)) < 10 then raise exception 'اكتب نتيجة التحقق وأسباب القرار'; end if;
  perform 1 from public.verification_requests where user_id=p_user_id and status='pending' for update;
  if not found then raise exception 'الطلب غير متاح للمراجعة'; end if;
@@ -47,7 +50,7 @@ language plpgsql security definer set search_path='' as $$
 begin
  if new.username is distinct from old.username or new.name is distinct from old.name or new.avatar_path is distinct from old.avatar_path then
  update public.account_verifications set active=false where user_id=new.id;
- update public.verification_requests set status='revoked',review_note='تغيّرت بيانات تعريف الحساب؛ يلزم طلب مراجعة جديد' where user_id=new.id and status='approved';
+ update public.verification_requests set status='revoked',review_note='تغيّرت بيانات تعريف الحساب؛ يلزم طلب مراجعة جديد' where user_id=new.id and status in ('approved','pending');
  end if;
  return new;
 end; $$;
