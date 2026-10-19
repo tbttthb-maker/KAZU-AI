@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.118.0';
 const cors = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
 Deno.serve(async req => {
  const respond = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { ...cors, 'Content-Type': 'application/json' } });
@@ -8,7 +8,9 @@ Deno.serve(async req => {
   const url = Deno.env.get('SUPABASE_URL')!;
   const authorization = req.headers.get('Authorization') || '';
   if (!authorization.startsWith('Bearer ')) return respond(401, { error: 'Sign in first' });
-  const admin = createClient(url, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false, autoRefreshToken: false } });
+  const secretKey = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}').default || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  if (!secretKey) throw new Error('Missing server credential');
+  const admin = createClient(url, secretKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data: { user }, error } = await admin.auth.getUser(authorization.slice(7));
   if (error || !user) return respond(401, { error: 'Invalid session' });
   // All app uploads use exactly one directory level: <verified user id>/<filename>.
@@ -20,6 +22,8 @@ Deno.serve(async req => {
    const { error: removeError } = await admin.storage.from('media').remove(data.map(f => `${user.id}/${f.name}`));
    if (removeError) throw removeError;
   }
+  const revoked = await admin.auth.admin.signOut(authorization.slice(7), 'global');
+  if (revoked.error) throw revoked.error;
   const deleted = await admin.auth.admin.deleteUser(user.id);
   if (deleted.error) throw deleted.error; // FK cascades remove profile, posts and social data.
   return respond(200, { deleted: true });
