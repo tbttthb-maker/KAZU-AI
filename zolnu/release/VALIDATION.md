@@ -23,3 +23,7 @@ A successful native archive is not a physical-device acceptance test. Sideloadly
 - Inbox refreshes every eight seconds while open; recent message list capped at 500, notifications at 200. Feed/profiles retain current API pagination limits. More scaling work is required before a large public launch.
 - Public media bucket means published media is accessible by URL. Blocking does not revoke already shared public URLs.
 - Existing SDK toolchain audit reported 26 transitive advisories (19 high, 7 moderate) in the earlier lockfile; no forced SDK downgrades were applied. This is not a public-production security certification.
+
+## Final native result
+
+GitHub run 39367620359 succeeded for commit `84becba9fec76283470300e224acb4f8457116a1`. The downloaded IPA was inspected as a Mach-O arm64 iPhoneOS build, version 0.4.0/build 6, UIDeviceFamily [1], minimum iOS 16.4, with a JS bundle and the hosted service configuration. Size: 12131738 bytes. SHA-256: `62879a59806f1f77fcbab8c3685f412a28554cba57ffe449fb398f9b95317ab2`. Outer artifact and nested IPA hashes matched the published metadata. It is unsigned and has not been tested on a physical iPhone.

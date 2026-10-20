@@ -1,0 +1,105 @@
+{
+  "version": "0.4.0",
+  "automated_tests": {
+    "passed": 12,
+    "failed": 0
+  },
+  "hosted_previous_acceptance": {
+    "ok": true,
+    "checks": [
+      "delete rejects unauthenticated request",
+      "anonymous cannot read account data",
+      "signup trigger created profile",
+      "second account sees first account post",
+      "forged post ownership rejected",
+      "other account cannot delete post",
+      "saves are private",
+      "other account cannot upload in owner folder",
+      "published media is accessible",
+      "blocked author hidden on server",
+      "verification evidence private",
+      "cannot insert blue verification",
+      "ordinary user cannot approve verification",
+      "reviewed blue badge persisted",
+      "identity change revokes blue badge",
+      "like grants founder reward",
+      "like does not grant blue verification",
+      "founder reward survives unlike and campaign stop",
+      "production account deletion succeeds",
+      "deleted profile removed",
+      "deleted account media removed",
+      "deleted account token cannot upload"
+    ],
+    "fixture_users": 3,
+    "cleanup_attempted": true
+  },
+  "hosted_messaging_transaction": {
+    "passed": [
+      "sender can read own message",
+      "third-party cannot read message",
+      "third-party cannot read notification",
+      "forged sender denied",
+      "recipient notification created",
+      "recipient can mark read",
+      "nobody policy denies send"
+    ],
+    "rolled_back": true,
+    "fixture_users_remaining": 0
+  },
+  "security_advisor_findings": 0,
+  "mobile_web_ui": {
+    "viewport": [
+      390,
+      844
+    ],
+    "passed": [
+      "empty launch without fake posts",
+      "country selector",
+      "publish",
+      "like",
+      "comment",
+      "persistent language",
+      "persistent appearance",
+      "focus and compact preferences",
+      "messages and notifications navigation",
+      "profile editing",
+      "frame application",
+      "saved-post drawer navigation",
+      "reload",
+      "no horizontal overflow",
+      "no runtime errors"
+    ]
+  },
+  "provider_readiness": {
+    "email": true,
+    "google": false,
+    "apple": false,
+    "phone": false,
+    "email_confirmation_required": true,
+    "public_smtp_setup_pending": true
+  },
+  "physical_iphone_tested": false,
+  "native": {
+    "app": "ZOLNU",
+    "version": "0.4.0",
+    "build": "6",
+    "minimum_ios": "16.4",
+    "device_family": [
+      1
+    ],
+    "architecture": "arm64",
+    "commit": "84becba9fec76283470300e224acb4f8457116a1",
+    "signed": false,
+    "sha256": "62879a59806f1f77fcbab8c3685f412a28554cba57ffe449fb398f9b95317ab2",
+    "size_bytes": 12131738,
+    "outer_sha256": "5adfcbcf50d6c8262aa86c551d3e9ca133e8e1486b716c7c100e7d94abfb3334",
+    "macho_cpu": "arm64",
+    "macho_platform": "iPhoneOS",
+    "supabase_config_present": true,
+    "physical_device_tested": false
+  },
+  "github_workflow": {
+    "run_id": 39367620359,
+    "conclusion": "success"
+  }
+}
