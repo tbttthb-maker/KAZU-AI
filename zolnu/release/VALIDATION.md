@@ -1,28 +1,25 @@
-# Validation — 2026-10-19
+# ZOLNU 0.4.0 validation
 
-Version 0.3.0: iPhone-only release configuration, Expo SDK 58, Expo Router.
+## Verified
 
-Passed locally:
+- TypeScript and ESLint checks.
+- 12 tests, including real Postgres-compatible PGlite migrations and authorization checks: profile ownership, private saves, blocks, cascade deletion, confirmed company ownership, permanent founder reward, independent blue-verification review, identity-change revocation, DM participants and forged senders, immutable message bodies, recipient read receipts, nobody/followers policies, bidirectional DM blocks, private notifications, removal of demo posts while retaining personal posts.
+- Hosted Supabase migration applied successfully. Live transaction exercised sender read, third-party message/notification isolation, rejected forged sender, generated recipient notification, recipient receipt update, and the nobody policy. Transaction rolled back; zero fixture users remained.
+- Earlier live Auth/Storage/verification acceptance suite passed 22 checks and cleaned all synthetic accounts and files. Its temporary endpoint was replaced with an authenticated 410 tombstone.
+- Supabase security advisor: zero findings after messages/notifications migration.
+- Mobile browser interaction QA at 390×844: clean empty feed; country picker; publish/like/comment; persisted language/theme/focus/compact; messages and notifications navigation; profile edit; frame application; reload; no horizontal overflow or browser runtime errors.
+- Google/Apple/phone readiness checked through live Auth settings: disabled. Email enabled, signup enabled, email confirmation required. No actual OAuth or SMS delivery claimed.
 
-- TypeScript and ESLint without errors or warnings.
-- Ten tests running model behavior and the real SQL migrations in PGlite with minimal Supabase auth/storage stubs.
-- Database ownership/RLS, private saves, blocks/cascades, confirmed-email company claim, protected campaign control, permanent founder rewards, private review evidence, denied direct blue-badge insertion, denied unauthorized/self review, independent administrator approval, automatic blue-badge revocation on identity change.
-- Chromium UI checks at 390×844: feed/media dimensions, like/comment/search/edit/post/reload/save/delete/block, navigation, bundled video time progression/mute/pause, and no runtime errors.
-- White phone interface inspected visually; circular avatars, full-width square media, compact navigation, three-column account/explore grids.
+## Native build
 
-GitHub macOS native build is tracked in Actions on branch `zolnu/iphone`. Only a successful native Xcode build and validated artifact constitute an IPA; source archives and JavaScript exports do not.
+The GitHub workflow runs npm ci, TypeScript, lint and tests, then Expo prebuild, CocoaPods and Xcode Release arm64 for iPhoneOS. It packages Payload/ZOLNU.app into an unsigned IPA and checks iPhone-only UIDeviceFamily and JS bundle. Build metadata and SHA-256 accompany the artifact.
 
-Not yet verified:
+A successful native archive is not a physical-device acceptance test. Sideloadly must sign it before installation. iOS minimum 16.4; Android/iPad not targeted. No App Store submission has occurred.
 
-- Physical iPhone execution, native media permission flow, codecs, signing and device performance.
-- Hosted Supabase authentication/email/storage and deployed account-deletion function.
-- Real account verification review or an operating moderation team.
-- App Store submission/acceptance.
+## Material limitations
 
-Founder stars are promotional rewards, not identity verification. Blue checks require a separate reviewed server grant. Native artifacts are unsigned before Sideloadly signing.
-
-Native build 1 succeeded on GitHub macOS 26 ARM64 / Xcode 26.6. Downloaded artifact checksum matched GitHub's digest. The IPA ZIP passed integrity checks; its Info.plist reports version 0.3.0, MinimumOSVersion 16.4, UIDeviceFamily [1], supported platform iPhoneOS. Main executable is arm64 Mach-O and main.jsbundle is present. This proves a native device build, not physical-device execution or signing.
-
-Dependency audit: npm audit reports 26 transitive advisories (19 high, 7 moderate) through the SDK/tool dependency graph, including braces, node-forge and uuid. Compatibility-preserving remediation needs review before a public production release. No automatic SDK downgrade or audit --force was applied.
-
-Native build 2 succeeded: https://github.com/tbttthb-maker/KAZU-AI/actions/runs/39329866287 (native commit f061f89b8669c6e548dae099657e2b9fba14936c). It includes the iPhone-only plist assertion and BUILD-INFO.json. Later commits only harden the server migration/tests and update documentation; they do not change the native bundle.
+- Public signup email needs custom SMTP; default Supabase SMTP restricts recipients/rate. Apple, Google and phone need external account credentials and redirect configuration.
+- No live broadcasting, push notifications, communities, actual coin payments, or end-to-end encrypted messaging. Free cosmetics do not charge users.
+- Inbox refreshes every eight seconds while open; recent message list capped at 500, notifications at 200. Feed/profiles retain current API pagination limits. More scaling work is required before a large public launch.
+- Public media bucket means published media is accessible by URL. Blocking does not revoke already shared public URLs.
+- Existing SDK toolchain audit reported 26 transitive advisories (19 high, 7 moderate) in the earlier lockfile; no forced SDK downgrades were applied. This is not a public-production security certification.

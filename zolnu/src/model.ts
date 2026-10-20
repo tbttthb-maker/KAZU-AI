@@ -14,16 +14,12 @@ export const profileSeed: Profile[] = [
   { id: COMPANY_DEMO_ID, username: 'zolnu', name: 'ZOLNU', bio: 'حساب الشركة الرسمي · كل لحظة، إلها مكان. هذا عرض تجريبي للحساب.', color: '#c4b5fd', badge: 'company', frame: 'solar', bannerArt: 2 },
 ];
 export function initialState(): SocialState {
-  return { profiles: profileSeed.map(p => ({ ...p })), posts: [
-    { id: 'launch-demo', userId: COMPANY_DEMO_ID, caption: 'إنت من البدايات. ✦\nحط لايك لهذا المنشور أثناء الحملة واحصل على شارة مؤسس دائمة لحسابك. العرض محدود، والشارة تبقى بعد نهايته.\nهذه محاكاة للحملة، محفوظة على جهازك.', uri: '', kind: 'image', art: 2, createdAt: new Date().toISOString() },
-    { id: 'p1', userId: 'lina', caption: 'أحيانًا، كل اللي نحتاجه نغيّر زاوية النظر. ✦\n#فن #ألوان #زولنو', uri: '', kind: 'image', art: 0, createdAt: '2026-10-19T10:00:00Z' },
-    { id: 'p2', userId: 'omar', caption: 'على حافة الهدوء.\n#تصميم #لحظات', uri: '', kind: 'image', art: 1, createdAt: '2026-10-19T09:00:00Z' },
-    { id: 'p3', userId: 'noor', caption: 'عالم صغير، خيال ما إله حدود.\n#إبداع #فضاء', uri: '', kind: 'image', art: 2, createdAt: '2026-10-19T08:00:00Z' },
-  ], likes: [], follows: [], saves: [], comments: [], blocked: [], reports: [], campaigns: [{ id: 'launch-demo', postId: 'launch-demo', startsAt: new Date().toISOString(), endsAt: new Date(Date.now() + 48 * 3600000).toISOString(), active: true }] };
+  return { profiles: profileSeed.filter(p=>p.id==='me').map(p => ({ ...p })), posts: [], likes: [], follows: [], saves: [], comments: [], blocked: [], reports: [], campaigns: [] };
 }
 export function hydrateDemo(data: Partial<SocialState>): SocialState {
  const seed = initialState();
- return { ...seed, ...data, profiles: [...(data.profiles || seed.profiles), ...seed.profiles.filter(u => !(data.profiles || seed.profiles).some(p => p.id === u.id))], posts: data.posts ? [...data.posts, ...seed.posts.filter(p => p.id === 'launch-demo' && !data.posts!.some(x => x.id === p.id))] : seed.posts, campaigns: data.campaigns || seed.campaigns };
+ const oldIds = new Set(['launch-demo','p1','p2','p3','demo-video']);
+ return { ...seed, ...data, profiles: data.profiles || seed.profiles, posts: (data.posts || []).filter(p=>!oldIds.has(p.id)), campaigns: (data.campaigns || []).filter(c=>!oldIds.has(c.postId)), likes: (data.likes || []).filter(k=>!oldIds.has(k.split('|')[1])), comments: (data.comments || []).filter(c=>!oldIds.has(c.postId)), saves: (data.saves || []).filter(k=>!oldIds.has(k.split('|')[1])) };
 }
 export function campaignActive(campaign: Campaign, now = Date.now()) { return campaign.active && Date.parse(campaign.startsAt) <= now && now < Date.parse(campaign.endsAt); }
 export function applyDemoLike(state: SocialState, uid: string, postId: string, now = Date.now()): SocialState {

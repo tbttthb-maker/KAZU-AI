@@ -1,6 +1,11 @@
-ZOLNU 0.3 — iPhone only
+ZOLNU 0.4.0 — للآيفون فقط
 
-Native build: GitHub branch zolnu/iphone, workflow Build ZOLNU IPA for Sideloadly.
-Source is in zolnu/ on that branch. Build output is an unsigned arm64 IPA for Sideloadly.
-Read README-AR.md for the actual feature list and backend setup.
-A founder star is not a blue verified check. Blue verification requires server-side review.
+نزّل ZOLNU-Sideloadly.ipa وثبته بواسطة Sideloadly على الكمبيوتر. لا تفك ضغط IPA ولا تغيّر امتداد ZIP إلى IPA.
+
+المتطلبات: iOS 16.4 أو أحدث. ملف البناء غير موقّع، ويوقّعه Sideloadly بحساب Apple الذي تدخله داخله.
+
+السيرفر متصل فعليًا. البريد/كلمة المرور مع تأكيد البريد متاحان في خدمة Auth، لكن إرسال التسجيل العام يحتاج SMTP. مسارات Google وApple ورقم الهاتف مجهزة وتنتظر إعداد مزوّديها على السيرفر. لا تدخل أسرار مزوّديك في التطبيق.
+
+الجديد: واجهة داكنة، ختم توثيق مسنن، رسائل وإشعارات داخلية فعلية، عربي/English، 4 أنماط، تركيز وعرض مضغوط، صور أغلفة وإطارات مجانية، وإزالة منشورات التجربة.
+
+تفاصيل الإعداد والقيود: README-AR.md وrelease/VALIDATION.md.

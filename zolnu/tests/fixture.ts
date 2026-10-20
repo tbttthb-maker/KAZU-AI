@@ -17,6 +17,6 @@ export async function databaseFixture() {
   await db.exec(readFileSync(new URL('../supabase/schema.sql', import.meta.url),'utf8'));
   await db.exec(readFileSync(new URL('../supabase/migrations/002_company_profiles.sql',import.meta.url),'utf8'));
  await db.exec(readFileSync(new URL('../supabase/migrations/003_account_verification.sql',import.meta.url),'utf8'));
- for (const f of readdirSync(new URL('../supabase/migrations',import.meta.url)).filter(f=>f.endsWith('_zolnu_rpc_hardening.sql'))) await db.exec(readFileSync(new URL('../supabase/migrations/'+f,import.meta.url),'utf8'));
+ for (const f of readdirSync(new URL('../supabase/migrations',import.meta.url)).filter(f=>f.endsWith('_zolnu_rpc_hardening.sql')||f.endsWith('_zolnu_storage_membership.sql')||f.endsWith('_zolnu_messages_and_notifications.sql'))) await db.exec(readFileSync(new URL('../supabase/migrations/'+f,import.meta.url),'utf8'));
  return db;
 }

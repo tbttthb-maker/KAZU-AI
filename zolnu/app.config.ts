@@ -5,12 +5,12 @@ if (process.env.ZOLNU_RELEASE === '1') {
  }
 }
 const config: ExpoConfig = {
- name: 'ZOLNU', slug: 'zolnu', version: '0.3.1', platforms: ['ios'], scheme: 'zolnu',
- orientation: 'portrait', userInterfaceStyle: 'light', icon: './assets/icon.png',
- backgroundColor: '#ffffff',
- ios: { supportsTablet: false, bundleIdentifier: process.env.APP_IDENTIFIER || 'dev.zolnu.preview', buildNumber: '4', infoPlist: { ITSAppUsesNonExemptEncryption: false, NSPhotoLibraryUsageDescription: 'زولنو يحتاج الوصول للصور والفيديوهات اللي تختار تنشرها.' } },
+ name: 'ZOLNU', slug: 'zolnu', version: '0.4.0', platforms: ['ios'], scheme: 'zolnu',
+ orientation: 'portrait', userInterfaceStyle: 'automatic', icon: './assets/icon.png',
+ backgroundColor: '#000000',
+ ios: { supportsTablet: false, bundleIdentifier: process.env.APP_IDENTIFIER || 'dev.zolnu.preview', buildNumber: '6', infoPlist: { ITSAppUsesNonExemptEncryption: false, NSPhotoLibraryUsageDescription: 'زولنو يحتاج الوصول للصور والفيديوهات اللي تختار تنشرها.' } },
  web: { favicon: './assets/favicon.png', name: 'ZOLNU' },
- plugins: [['expo-router', { asyncRoutes: false }], 'expo-asset', 'expo-video', ['expo-image-picker', { photosPermission: 'اختار صورة أو فيديو تشاركه على زولنو.', cameraPermission: false, microphonePermission: false }]],
+ plugins: [['expo-router', { asyncRoutes: false }], 'expo-web-browser', 'expo-asset', 'expo-video', ['expo-image-picker', { photosPermission: 'اختار صورة أو فيديو تشاركه على زولنو.', cameraPermission: false, microphonePermission: false }]],
  extra: process.env.EAS_PROJECT_ID ? { eas: { projectId: process.env.EAS_PROJECT_ID } } : {},
 };
 export default config;

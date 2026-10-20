@@ -9,7 +9,7 @@ import { SERVICE_URL, SERVICE_PUBLISHABLE_KEY } from './service-config';
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL || SERVICE_URL;
 const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY || SERVICE_PUBLISHABLE_KEY;
-export const supabase = url && key ? createClient(url, key, { auth: { storage: AsyncStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false } }) : null;
+export const supabase = url && key ? createClient(url, key, { auth: { storage: AsyncStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, flowType: 'pkce' } }) : null;
 if (Platform.OS !== 'web' && supabase) AppState.addEventListener('change', state => state === 'active' ? supabase.auth.startAutoRefresh() : supabase.auth.stopAutoRefresh());
 export function requireBackend() { if (!supabase) throw new Error('يحتاج إعداد السيرفر أولًا.'); return supabase; }
 export async function loadRemote(uid: string): Promise<SocialState> {
