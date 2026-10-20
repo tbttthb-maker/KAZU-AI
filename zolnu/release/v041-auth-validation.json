@@ -1,0 +1,33 @@
+{
+  "version": "0.4.1",
+  "build": 7,
+  "unit_tests_passed": 17,
+  "unit_tests_failed": 0,
+  "typecheck": "passed",
+  "lint": "passed",
+  "ui_test": "mocked Auth responses: signup pending, reload persistence, Arabic code, expired code, SMTP throttling, cooldown, disabled provider labels; no runtime errors",
+  "smtp_delivery_tested": false,
+  "google_apple_login_tested": false,
+  "physical_iphone_tested": false,
+  "native_build": {
+    "app": "ZOLNU",
+    "version": "0.4.1",
+    "build": "7",
+    "minimum_ios": "16.4",
+    "device_family": [
+      1
+    ],
+    "architecture": "arm64",
+    "commit": "62168bc245857aa9fdb95ecf7625f4845859b12c",
+    "signed": false,
+    "sha256": "3df8bf578875c2246a53b7c56a2eba2aac214ff6c19de572e78cd03eef4ebd9d",
+    "size_bytes": 12140100,
+    "outer_sha256": "d1245e3c47ea363146bd540f081720aee0d0bd482b13c404d087968c8ae3116d",
+    "macho_cpu": "arm64",
+    "macho_platform": "iPhoneOS",
+    "supabase_config_present": true,
+    "physical_device_tested": false,
+    "workflow_run_id": 39372341691,
+    "workflow_conclusion": "success"
+  }
+}
