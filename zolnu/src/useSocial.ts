@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import { File, Directory, Paths } from 'expo-file-system';
 import { Asset } from 'expo-asset';
+import { emailAuthenticate, EmailAuthOutcome, PENDING_CONFIRMATION_KEY } from './authFlow';
+import { authRedirect } from './authProviders';
 import { DEMO_ID, Profile, Post, SocialState, edge, initialState, toggle, validatePost, validateUsername, hydrateDemo, applyDemoLike, Frame } from './model';
 import { deleteRemotePost, loadRemote, remoteToggle, requireBackend, supabase, uploadPost, uploadProfileImage } from './backend';
 
@@ -21,8 +23,8 @@ export function useSocial() {
   useEffect(() => { if (ready && !online) AsyncStorage.setItem(STORE, JSON.stringify(state)).catch(() => tell('تعذّر حفظ التغييرات؛ تأكد من مساحة الجهاز.')); }, [state, ready, online]);
   useEffect(() => { if (!ready || !supabase) return; let live = true; let generation = 0;
     async function restore(id?: string) { const token = ++generation; try { const next = id ? await loadRemote(id) : hydrateDemo(JSON.parse(await AsyncStorage.getItem(STORE) || '{}')); if (live && token === generation) { setState(next); setUid(id || DEMO_ID); } } catch { if (live) tell('تعذّر تحميل الحساب. تحقق من اتصال السيرفر وأعد تسجيل الدخول.'); } }
-    supabase.auth.getSession().then(({ data }) => { if (data.session) void restore(data.session.user.id); });
-    const { data } = supabase.auth.onAuthStateChange((event, session) => { if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') setTimeout(() => void restore(session?.user.id), 0); });
+    supabase.auth.getSession().then(({ data }) => { if (data.session) { void AsyncStorage.removeItem(PENDING_CONFIRMATION_KEY); void restore(data.session.user.id); } });
+    const { data } = supabase.auth.onAuthStateChange((event, session) => { if(event==='SIGNED_IN')void AsyncStorage.removeItem(PENDING_CONFIRMATION_KEY); if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') setTimeout(() => void restore(session?.user.id), 0); });
     return () => { live = false; data.subscription.unsubscribe(); };
   }, [ready]);
   async function refresh() { if (online) setState(await loadRemote(uid)); }
@@ -68,7 +70,8 @@ export function useSocial() {
     else setState(p => ({ ...p, campaigns: p.campaigns.map(c => c.id === id ? { ...c, active: false } : c) }));
     tell('انتهى منح الشارات الجديدة. الشارات الممنوحة باقية.');
   }); }
-  async function auth(email: string, password: string, signup: boolean) { return run(async () => { if (!email.trim() || password.length < 8) throw new Error('اكتب البريد وكلمة مرور من ٨ أحرف على الأقل.'); const db = requireBackend(); const r = signup ? await db.auth.signUp({ email: email.trim(), password }) : await db.auth.signInWithPassword({ email: email.trim(), password }); if (r.error) { const messages: Record<string,string> = {invalid_credentials:'البريد أو كلمة المرور غير صحيحة.',email_not_confirmed:'أكد بريدك الإلكتروني أولًا، وبعدين سجّل الدخول.',over_email_send_rate_limit:'وصلت للحد المؤقت لرسائل التأكيد. انتظر قبل إعادة المحاولة.',email_address_not_authorized:'التسجيل العام ينتظر تجهيز خدمة البريد. تواصل مع إدارة التطبيق.'}; throw new Error(messages[r.error.code || ''] || r.error.message); } tell(signup && !r.data.session ? 'أكد حسابك من بريدك الإلكتروني، وبعدين سجّل الدخول.' : 'أهلًا بيك في زولنو.'); }); }
+  async function auth(email:string,password:string,signup:boolean):Promise<EmailAuthOutcome>{let outcome:EmailAuthOutcome={status:'error',code:'busy',message:'انتظر حتى تكتمل العملية الحالية.'};await run(async()=>{outcome=await emailAuthenticate(requireBackend(),email,password,signup,authRedirect());if(outcome.status==='signed_in')tell('أهلًا بيك في زولنو.');});return outcome;}
+
   async function moderate(post: Post, block: boolean) { return run(async () => { if (online) { const { error } = await requireBackend().from(block ? 'blocks' : 'reports').upsert(block ? { user_id: uid, target_id: post.userId } : { user_id: uid, post_id: post.id, reason: 'بلاغ من التطبيق' }, { onConflict: block ? 'user_id,target_id' : 'user_id,post_id' }); if (error) throw error; } setState(p => block ? { ...p, blocked: Array.from(new Set([...p.blocked, edge(uid, post.userId)])) } : { ...p, reports: Array.from(new Set([...p.reports, post.id])) }); tell(block ? 'تم حظر الحساب وإخفاء منشوراته.' : online ? 'تم تسجيل البلاغ للمراجعة بلوحة الإدارة.' : 'تم حفظ البلاغ محليًا ضمن التجربة.'); }); }
   async function remove(post: Post) { return run(async () => { if (post.userId !== uid) throw new Error('تگدر تحذف منشوراتك فقط.'); if (online) await deleteRemotePost(post); else if (Platform.OS !== 'web' && post.uri.startsWith(Paths.document.uri)) { const file = new File(post.uri); if (file.exists) file.delete(); } setState(p => ({ ...p, posts: p.posts.filter(x => x.id !== post.id), comments: p.comments.filter(c => c.postId !== post.id), likes: p.likes.filter(k => !k.endsWith(`|${post.id}`)), saves: p.saves.filter(k => !k.endsWith(`|${post.id}`)) })); tell('تم حذف المنشور.'); }); }
   async function unblock() { return run(async () => { if (online) { const { error } = await requireBackend().from('blocks').delete().eq('user_id', uid); if (error) throw error; } setState(p => ({ ...p, blocked: p.blocked.filter(k => !k.startsWith(`${uid}|`)) })); tell('تم إلغاء حظر الحسابات.'); }); }

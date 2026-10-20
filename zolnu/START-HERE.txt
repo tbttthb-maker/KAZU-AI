@@ -1,4 +1,4 @@
-ZOLNU 0.4.0 — للآيفون فقط
+ZOLNU 0.4.1 — للآيفون فقط
 
 نزّل ZOLNU-Sideloadly.ipa وثبته بواسطة Sideloadly على الكمبيوتر. لا تفك ضغط IPA ولا تغيّر امتداد ZIP إلى IPA.
 
